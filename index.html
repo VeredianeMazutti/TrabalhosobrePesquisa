@@ -1,0 +1,795 @@
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquivo Nº 06 — O que é Pesquisa?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#241b13;
+    --board2:#33261a;
+    --board-vignette: radial-gradient(ellipse at 50% 0%, #3a2c1e 0%, #241b13 70%);
+    --paper:#f3e7cf;
+    --paper2:#e9d7ae;
+    --paper-shadow: 0 18px 34px rgba(0,0,0,0.45), 0 3px 8px rgba(0,0,0,0.35);
+    --ink:#241c12;
+    --ink-soft:#5c4d38;
+    --string:#a4302a;
+    --string-dark:#6f1f1b;
+    --pin:#cfd3d6;
+    --pin-dark:#8b8f93;
+    --gold:#c69a2e;
+    --stamp:#2f5233;
+    --f-display:'Special Elite', monospace;
+    --f-body:'Source Serif 4', Georgia, serif;
+    --f-hand:'Caveat', cursive;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--board);
+    color:var(--ink);
+    font-family:var(--f-body);
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--gold); color:var(--ink); }
+
+  /* ---------- Cork board texture ---------- */
+  .board-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      radial-gradient(rgba(0,0,0,0.35) 1px, transparent 1.4px),
+      radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1.4px),
+      linear-gradient(180deg, var(--board2), var(--board) 40%);
+    background-size: 7px 7px, 11px 11px, 100% 100%;
+    background-position: 0 0, 3px 4px, 0 0;
+    opacity:0.9;
+  }
+
+  .wrap{ position:relative; z-index:1; }
+
+  a{ color:inherit; }
+
+  /* ---------- Side nav dots ---------- */
+  .case-nav{
+    position:fixed; right:22px; top:50%; transform:translateY(-50%);
+    z-index:50; display:flex; flex-direction:column; gap:14px;
+  }
+  .case-nav button{
+    width:11px; height:11px; border-radius:50%;
+    background:rgba(243,231,207,0.25);
+    border:1px solid rgba(243,231,207,0.5);
+    cursor:pointer; padding:0; transition: all .3s ease;
+  }
+  .case-nav button.active{
+    background:var(--string);
+    border-color:var(--string);
+    box-shadow:0 0 0 4px rgba(164,48,42,0.25);
+    transform:scale(1.15);
+  }
+  @media (max-width:760px){ .case-nav{ display:none; } }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100vh; min-height:100dvh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px 24px; position:relative;
+  }
+  .hero::before{ /* desk lamp vignette */
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(ellipse 60% 45% at 50% 30%, rgba(255,235,190,0.10), transparent 70%);
+    pointer-events:none;
+  }
+  .case-tape{
+    font-family:var(--f-display);
+    font-size:0.72rem; letter-spacing:0.28em;
+    color:var(--gold); text-transform:uppercase;
+    padding:8px 18px; border:1px solid rgba(198,154,46,0.5);
+    border-radius:2px; margin-bottom:34px;
+    background:rgba(0,0,0,0.2);
+  }
+  .hero h1{
+    font-family:var(--f-display);
+    color:var(--paper);
+    font-size:clamp(2.2rem, 7vw, 5.2rem);
+    line-height:1.05; letter-spacing:0.01em;
+    margin:0 0 22px 0; max-width:16ch;
+  }
+  .hero h1 span{
+    display:inline-block;
+    opacity:0; transform:translateY(18px);
+    animation: rise .7s ease forwards;
+  }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0);} }
+
+  .hero-sub{
+    font-family:var(--f-hand); color:var(--paper2);
+    font-size:clamp(1.3rem,2.6vw,1.7rem);
+    min-height:1.6em; border-right:2px solid var(--gold);
+    padding-right:6px; white-space:nowrap; overflow:hidden;
+  }
+
+  .hero-meta{
+    margin-top:26px; font-family:var(--f-body); color:rgba(243,231,207,0.7);
+    font-size:0.92rem; line-height:1.6; max-width:34ch;
+  }
+
+  .scroll-cue{
+    margin-top:96px; font-family:var(--f-display); font-size:0.7rem;
+    letter-spacing:0.22em; color:rgba(243,231,207,0.55); text-transform:uppercase;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    background:none; border:none; cursor:pointer;
+  }
+  .scroll-cue .glass{
+    width:22px; height:22px; border:2px solid var(--gold); border-radius:50%;
+    position:relative; animation: bob 2.2s ease-in-out infinite;
+  }
+  .scroll-cue .glass::after{
+    content:""; position:absolute; width:9px; height:2px; background:var(--gold);
+    bottom:-6px; right:-6px; transform:rotate(45deg); border-radius:2px;
+  }
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+
+  /* ---------- Section shell ---------- */
+  section{ position:relative; padding: 48px 20px; }
+  .section-inner{ max-width:920px; margin:0 auto; }
+
+  .kicker{
+    font-family:var(--f-display); color:var(--gold);
+    font-size:0.78rem; letter-spacing:0.24em; text-transform:uppercase;
+    display:flex; align-items:center; gap:12px; margin-bottom:16px;
+  }
+  .kicker::before{ content:""; width:26px; height:1px; background:var(--gold); display:inline-block;}
+
+  h2.section-title{
+    font-family:var(--f-display); color:var(--paper);
+    font-size:clamp(1.6rem, 4vw, 2.5rem);
+    margin:0 0 28px 0; max-width:20ch;
+  }
+
+  /* ---------- Case board / spine ---------- */
+  .case-board{ position:relative; padding-left:64px; }
+  .case-board::before{
+    content:""; position:absolute; left:23px; top:6px; bottom:6px; width:2px;
+    background: repeating-linear-gradient(180deg, var(--string) 0 10px, transparent 10px 18px);
+    opacity:0.85;
+  }
+  .row{ position:relative; margin-bottom:0; }
+  .row .pin{
+    position:absolute; left:-64px; top:36px; width:16px; height:16px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #fff, var(--pin) 40%, var(--pin-dark) 100%);
+    box-shadow:0 2px 4px rgba(0,0,0,0.5);
+  }
+  .row .pin::before{
+    content:""; position:absolute; left:16px; top:7px; width:40px; height:2px;
+    background:var(--string); opacity:0.85;
+  }
+
+  /* ---------- Cards (index cards / folders) ---------- */
+  .card{
+    background:var(--paper);
+    background-image: linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 100% 28px;
+    color:var(--ink);
+    padding:34px 32px;
+    border-radius:2px;
+    box-shadow: var(--paper-shadow);
+    transform: rotate(var(--rot,-0.6deg));
+    position:relative;
+    opacity:0; translate:0 26px;
+    transition: opacity .7s ease, translate .7s ease;
+    margin-bottom:36px;
+  }
+  .card.visible{ opacity:1; translate:0 0; }
+  .card::after{
+    content:""; position:absolute; top:-9px; left:34px; width:52px; height:18px;
+    background:rgba(198,154,46,0.55); transform:rotate(-3deg);
+    box-shadow:0 2px 3px rgba(0,0,0,0.25);
+  }
+  .card .file-no{
+    font-family:var(--f-display); font-size:0.72rem; color:var(--string-dark);
+    letter-spacing:0.18em; text-transform:uppercase; margin-bottom:10px; display:block;
+  }
+  .card h3{
+    font-family:var(--f-display); font-size:1.35rem; margin:0 0 14px 0; color:var(--ink);
+  }
+  .card p{ margin:0 0 12px 0; line-height:1.65; color:var(--ink-soft); font-size:1rem; }
+  .card p:last-child{ margin-bottom:0; }
+  .card .stamp-mini{
+    font-family:var(--f-hand); font-weight:700; color:var(--stamp);
+    font-size:1.05rem; margin-top:14px; display:inline-block;
+    border:2px solid var(--stamp); padding:2px 10px; border-radius:4px;
+    transform:rotate(-3deg); opacity:0.85;
+  }
+
+  /* quote card */
+  .quote-card{
+    font-family:var(--f-hand); font-size:1.5rem; color:var(--paper);
+    text-align:center; max-width:16ch; margin:28px auto 0;
+    border-top:1px dashed rgba(243,231,207,0.4);
+    padding-top:20px;
+  }
+
+  /* ---------- Suspect grid (types) ---------- */
+  .type-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:26px; margin-top:8px;
+  }
+  .type-card{
+    background:var(--paper); border-radius:2px; padding:26px 22px;
+    box-shadow:var(--paper-shadow); position:relative;
+    transform:rotate(var(--rot,0deg));
+    opacity:0; translate:0 20px; transition:opacity .6s ease, translate .6s ease;
+  }
+  .type-card.visible{ opacity:1; translate:0 0; }
+  .type-card .icon{ font-size:1.8rem; display:block; margin-bottom:10px; }
+  .type-card h4{ font-family:var(--f-display); font-size:1.05rem; margin:0 0 10px 0; }
+  .type-card p{ font-size:0.94rem; line-height:1.55; color:var(--ink-soft); margin:0; }
+  .type-card .clip{
+    position:absolute; top:-11px; right:20px; width:26px; height:20px;
+    border:3px solid var(--pin-dark); border-bottom:none; border-radius:4px 4px 0 0;
+    opacity:0.7;
+  }
+
+  /* ---------- Principles checklist ---------- */
+  .rules{ list-style:none; margin:0; padding:0; display:grid; gap:16px; }
+  .rules li{
+    display:flex; gap:16px; align-items:flex-start;
+    background:var(--paper); padding:18px 20px; border-radius:2px;
+    box-shadow: var(--paper-shadow); opacity:0; translate:-16px 0;
+    transition:opacity .6s ease, translate .6s ease;
+  }
+  .rules li.visible{ opacity:1; translate:0 0; }
+  .rules .num{
+    font-family:var(--f-display); color:var(--string); font-size:1.1rem;
+    min-width:2ch;
+  }
+  .rules p{ margin:0; color:var(--ink-soft); line-height:1.55; }
+  .rules strong{ color:var(--ink); font-family:var(--f-display); font-size:0.95rem; display:block; margin-bottom:4px;}
+
+  /* ---------- Kit / evidence bags ---------- */
+  .kit-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:22px;
+  }
+  .kit-item{
+    background:rgba(243,231,207,0.08); border:1px dashed rgba(243,231,207,0.35);
+    border-radius:6px; padding:22px 18px; text-align:left;
+    opacity:0; translate:0 18px; transition:opacity .6s ease, translate .6s ease;
+  }
+  .kit-item.visible{ opacity:1; translate:0 0; }
+  .kit-item .tag{
+    display:inline-block; font-family:var(--f-display); font-size:0.68rem;
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--gold);
+    border:1px solid var(--gold); padding:2px 8px; border-radius:2px; margin-bottom:10px;
+  }
+  .kit-item h4{ font-family:var(--f-display); color:var(--paper); font-size:1.02rem; margin:0 0 8px 0; }
+  .kit-item p{ color:rgba(243,231,207,0.75); font-size:0.92rem; line-height:1.5; margin:0; }
+
+  /* ---------- Timeline ---------- */
+  .tline{ position:relative; padding-left:36px; }
+  .tline::before{
+    content:""; position:absolute; left:9px; top:6px; bottom:6px; width:2px;
+    background:repeating-linear-gradient(180deg, var(--gold) 0 8px, transparent 8px 14px);
+  }
+  .tstep{
+    position:relative; margin-bottom:26px; opacity:0; translate:0 16px;
+    transition:opacity .6s ease, translate .6s ease;
+  }
+  .tstep.visible{ opacity:1; translate:0 0; }
+  .tstep::before{
+    content: attr(data-n); position:absolute; left:-36px; top:-2px;
+    width:20px; height:20px; border-radius:50%; background:var(--gold);
+    color:var(--board); font-family:var(--f-display); font-size:0.72rem;
+    display:flex; align-items:center; justify-content:center; font-weight:700;
+  }
+  .tstep h4{ font-family:var(--f-display); color:var(--paper); font-size:1.05rem; margin:0 0 6px 0;}
+  .tstep p{ color:rgba(243,231,207,0.75); margin:0; line-height:1.55; font-size:0.96rem;}
+
+  /* ---------- Impact cards (comportamento) ---------- */
+  .impact-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:22px; margin-bottom:26px;
+  }
+  .impact-card{
+    background:var(--paper); border-radius:2px; padding:26px 24px;
+    box-shadow:var(--paper-shadow); position:relative;
+    transform:rotate(var(--rot,0deg));
+    opacity:0; translate:0 20px; transition:opacity .6s ease, translate .6s ease;
+  }
+  .impact-card.visible{ opacity:1; translate:0 0; }
+  .impact-card .file-no{
+    font-family:var(--f-display); font-size:0.7rem; color:var(--string-dark);
+    letter-spacing:0.16em; text-transform:uppercase; margin-bottom:8px; display:block;
+  }
+  .impact-card h4{ font-family:var(--f-display); font-size:1.08rem; margin:0 0 10px 0; color:var(--ink); }
+  .impact-card p{ font-size:0.94rem; line-height:1.6; color:var(--ink-soft); margin:0; }
+  .impact-note{
+    background:rgba(243,231,207,0.08); border:1px dashed rgba(243,231,207,0.35);
+    border-radius:6px; padding:22px 24px; color:rgba(243,231,207,0.8);
+    line-height:1.65; font-size:0.96rem;
+  }
+
+  /* ---------- Identificação (aba do trabalho) ---------- */
+  .id-card{
+    background:var(--paper); border-radius:2px; padding:34px 32px;
+    box-shadow:var(--paper-shadow); position:relative;
+    opacity:0; translate:0 20px; transition:opacity .6s ease, translate .6s ease;
+  }
+  .id-card.visible{ opacity:1; translate:0 0; }
+  .id-card .file-no{
+    font-family:var(--f-display); font-size:0.72rem; color:var(--string-dark);
+    letter-spacing:0.18em; text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .id-table{ width:100%; border-collapse:collapse; }
+  .id-table tr{ border-bottom:1px dashed rgba(92,77,56,0.3); }
+  .id-table tr:last-child{ border-bottom:none; }
+  .id-table td{ padding:12px 6px; vertical-align:top; }
+  .id-table td.label{
+    font-family:var(--f-display); font-size:0.72rem; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--string-dark); width:38%;
+  }
+  .id-table td.value{ color:var(--ink); font-size:1rem; line-height:1.5; }
+
+  /* ---------- Referências ---------- */
+  .refs{ list-style:none; margin:0; padding:0; display:grid; gap:14px; }
+  .refs li{
+    background:rgba(243,231,207,0.08); border:1px dashed rgba(243,231,207,0.35);
+    border-radius:6px; padding:16px 20px; color:rgba(243,231,207,0.8);
+    font-size:0.9rem; line-height:1.6; opacity:0; translate:0 14px;
+    transition:opacity .6s ease, translate .6s ease; word-break:break-word;
+  }
+  .refs li.visible{ opacity:1; translate:0 0; }
+  .refs a{ color:var(--gold); text-decoration:underline; }
+
+  /* ---------- Closing ---------- */
+  .closing{ text-align:center; padding-bottom:100px; }
+  .stamp{
+    display:inline-block; font-family:var(--f-display); font-size:clamp(1.4rem,4vw,2.2rem);
+    color:var(--string); border:5px double var(--string); padding:14px 34px;
+    transform:rotate(-6deg) scale(0.85); opacity:0;
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2,1.4,.4,1);
+    letter-spacing:0.06em; margin-bottom:26px;
+  }
+  .stamp.visible{ opacity:0.9; transform:rotate(-6deg) scale(1); }
+  .closing-highlight{
+    font-family:var(--f-hand); font-weight:700; color:var(--paper);
+    font-size:clamp(1.5rem, 4vw, 2.1rem); line-height:1.3;
+    max-width:22ch; margin:0 auto 26px; min-height:2.6em;
+    border-right:2px solid var(--gold); display:inline-block; white-space:normal;
+  }
+  .closing-highlight.done{ border-right:2px solid transparent; }
+  .closing-note{
+    max-width:560px; margin:0 auto; color:rgba(243,231,207,0.8); line-height:1.7;
+  }
+  .closing-mark{
+    font-family:var(--f-display); color:var(--gold); font-size:0.85rem;
+    letter-spacing:0.1em; margin-top:26px;
+  }
+  .footer-small{
+    text-align:center; color:rgba(243,231,207,0.35); font-size:0.78rem;
+    padding-bottom:36px; font-family:var(--f-display); letter-spacing:0.08em;
+  }
+
+  /* Centraliza o último card quando o total de itens é ímpar */
+  .type-grid > *:last-child:nth-child(odd),
+  .kit-grid > *:last-child:nth-child(odd){
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  @media (max-width:640px){
+    .case-board{ padding-left:46px; }
+    .case-board::before{ left:15px; }
+    .row .pin{ left:-46px; width:13px; height:13px; }
+    .row .pin::before{ width:28px; left:13px; top:6px; }
+    .card{ padding:26px 20px; }
+    .id-table td.label{ width:46%; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+    html{ scroll-behavior:auto; }
+  }
+
+  .signature{
+    color:rgba(243,231,207,0.8);
+    font-family:var(--f-body);
+    font-size:0.95rem;
+    margin-top:18px;
+    opacity:1;
+  }
+</style>
+</head>
+<body>
+
+<div class="board-bg"></div>
+
+<nav class="case-nav" aria-hidden="true">
+  <button data-target="s-identificacao" title="Identificação"></button>
+  <button data-target="s-abertura" title="Abertura do caso"></button>
+  <button data-target="s-importancia" title="Importância"></button>
+  <button data-target="s-tipos" title="Tipos de pesquisa"></button>
+  <button data-target="s-regras" title="Princípios"></button>
+  <button data-target="s-kit" title="Métodos de coleta"></button>
+  <button data-target="s-linha" title="Etapas"></button>
+  <button data-target="s-impacto" title="Impacto real"></button>
+  <button data-target="s-referencias" title="Referências"></button>
+  <button data-target="s-fim" title="Encerramento"></button>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="case-tape">Trabalho de Pesquisa · Arquivo Nº 06</div>
+    <h1>
+      <span style="animation-delay:.05s">O</span> <span style="animation-delay:.12s">QUE</span> <span style="animation-delay:.19s">É</span><br>
+      <span style="animation-delay:.28s">PESQUISA?</span>
+    </h1>
+    <div class="hero-sub" id="typed"></div>
+    <button class="scroll-cue" id="scroll-btn" type="button">
+      <span class="glass"></span>
+      Explorar dossiê
+    </button>
+  </header>
+
+  <!-- IDENTIFICAÇÃO -->
+  <section id="s-identificacao">
+    <div class="section-inner">
+      <div class="kicker">Ficha de abertura</div>
+      <h2 class="section-title">Identificação do dossiê</h2>
+
+      <div class="id-card" data-reveal>
+        <span class="file-no">Dados do investigador</span>
+        <table class="id-table">
+          <tr>
+            <td class="label">Aluna</td>
+            <td class="value">Verediane Mazutti Filomeno</td>
+          </tr>
+          <tr>
+            <td class="label">Curso</td>
+            <td class="value">Técnico em Administração</td>
+          </tr>
+          <tr>
+            <td class="label">Polo</td>
+            <td class="value">Pimenta Bueno</td>
+          </tr>
+          <tr>
+            <td class="label">Disciplina</td>
+            <td class="value">Orientação para a Pesquisa e Prática Profissional</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABERTURA DO CASO -->
+  <section id="s-abertura">
+    <div class="section-inner">
+      <div class="kicker">Parte 01</div>
+      <h2 class="section-title">Abertura do caso</h2>
+
+      <div class="case-board">
+        <div class="row">
+          <span class="pin"></span>
+          <div class="card" style="--rot:-0.8deg" data-reveal>
+            <span class="file-no">Ficha do investigador</span>
+            <h3>Toda pesquisa começa com uma pergunta incômoda</h3>
+            <p>Pesquisar é decidir não aceitar uma resposta pronta. Diante de uma dúvida, alguém, cientista, estudante ou apenas curioso, reúne pistas, testa ideias e monta um caminho até uma conclusão em que se possa confiar.</p>
+            <p>Quando esse caminho segue etapas organizadas, com critérios claros de coleta e análise, o processo ganha um nome mais sério: <strong>pesquisa científica</strong>, uma investigação estruturada para responder a uma pergunta ou resolver um problema.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="quote-card">"nem toda pergunta tem resposta fácil, por isso existe pesquisa"</p>
+    </div>
+  </section>
+
+  <!-- IMPORTÂNCIA -->
+  <section id="s-importancia">
+    <div class="section-inner">
+      <div class="kicker">Parte 02</div>
+      <h2 class="section-title">Prova nº 1 — por que isso importa</h2>
+
+      <div class="case-board">
+        <div class="row">
+          <span class="pin"></span>
+          <div class="card" style="--rot:0.6deg" data-reveal>
+            <span class="file-no">Depoimento — universidade</span>
+            <h3>É nas universidades que o Brasil mais produz conhecimento novo</h3>
+            <p>Bolsas de iniciação científica, grupos de pesquisa e programas de pós-graduação existem justamente para isso. Formar alguém que pesquisa é formar alguém que pensa criticamente e sabe resolver problemas reais, não apenas repetir o que já foi dito.</p>
+            <p>O efeito não fica trancado dentro do campus: durante a pandemia, pesquisas em andamento nas universidades ajudaram a acelerar o desenvolvimento de vacinas que chegaram a toda a população.</p>
+          </div>
+        </div>
+        <div class="row">
+          <span class="pin"></span>
+          <div class="card" style="--rot:-1deg" data-reveal>
+            <span class="file-no">Depoimento — comportamento</span>
+            <h3>A pesquisa também muda o que fazemos no dia a dia</h3>
+            <p>O conhecimento científico é provisório, e é isso que o torna poderoso. Quando o ovo foi apontado como vilão da alimentação, seu consumo caiu; quando pesquisas mais recentes o reabilitaram, o consumo voltou a subir. Uma investigação bem conduzida pode mudar, literalmente, o comportamento de milhões de pessoas.</p>
+            <span class="stamp-mini">impacto confirmado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIPOS DE PESQUISA -->
+  <section id="s-tipos">
+    <div class="section-inner">
+      <div class="kicker">Parte 03</div>
+      <h2 class="section-title">Perfil dos suspeitos — os tipos de pesquisa</h2>
+
+      <div class="type-grid">
+        <div class="type-card" style="--rot:-1.4deg" data-reveal>
+          <span class="clip"></span>
+          <span class="icon">🔬</span>
+          <h4>Científica</h4>
+          <p>Segue um método formal, com hipóteses testáveis e critérios claros de coleta e análise. Nada entra na conclusão sem passar pelo crivo da evidência.</p>
+        </div>
+        <div class="type-card" style="--rot:0.9deg" data-reveal>
+          <span class="clip"></span>
+          <span class="icon">📊</span>
+          <h4>Quantitativa</h4>
+          <p>Transforma o problema em números. Usa questionários, testes e estatística para medir, comparar e generalizar, respondendo "quanto" e "com que frequência".</p>
+        </div>
+        <div class="type-card" style="--rot:-0.6deg" data-reveal>
+          <span class="clip"></span>
+          <span class="icon">🗣️</span>
+          <h4>Qualitativa</h4>
+          <p>Investiga significados, motivações e comportamentos por meio de entrevistas, observação e grupos focais. Poucos casos, muita profundidade, respondendo "por quê" e "como".</p>
+        </div>
+        <div class="type-card" style="--rot:1.2deg" data-reveal>
+          <span class="clip"></span>
+          <span class="icon">🧪</span>
+          <h4>Empírica</h4>
+          <p>Parte da observação direta e da experiência prática, não só da teoria. O investigador testa no mundo real, em campo, laboratório ou experimento, para confirmar ou derrubar uma hipótese.</p>
+        </div>
+        <div class="type-card" style="--rot:-1deg" data-reveal>
+          <span class="clip"></span>
+          <span class="icon">🔍</span>
+          <h4>Do cotidiano</h4>
+          <p>É a investigação informal que qualquer pessoa faz ao comparar preços, testar uma receita ou perguntar qual caminho é mais rápido. Sem protocolo científico, mas com a mesma lógica: observar, comparar, concluir.</p>
+        </div>
+        <div class="type-card" style="--rot:0.7deg" data-reveal>
+          <span class="clip"></span>
+          <span class="icon">🧭</span>
+          <h4>Exploratória</h4>
+          <p>Entra em cena quando o problema ainda não tem contorno definido. Serve para ganhar familiaridade com um tema novo antes de seguir em frente.</p>
+        </div>
+        <div class="type-card" style="--rot:-0.4deg" data-reveal>
+          <span class="clip"></span>
+          <span class="icon">📚</span>
+          <h4>Bibliográfica</h4>
+          <p>Não gera dados novos, reconstrói o que já foi descoberto. Reúne livros, artigos e teses publicados para embasar qualquer uma das investigações acima.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRINCÍPIOS -->
+  <section id="s-regras">
+    <div class="section-inner">
+      <div class="kicker">Parte 04</div>
+      <h2 class="section-title">Regras da investigação — princípios da pesquisa</h2>
+
+      <ul class="rules">
+        <li data-reveal><span class="num">01</span><p><strong>Pergunta clara</strong>Sem uma pergunta bem definida, não existe caso a resolver.</p></li>
+        <li data-reveal><span class="num">02</span><p><strong>Coerência metodológica</strong>O método escolhido precisa combinar com a pergunta feita.</p></li>
+        <li data-reveal><span class="num">03</span><p><strong>Rigor na coleta</strong>Dados mal coletados condenam qualquer conclusão, por melhor que ela pareça.</p></li>
+        <li data-reveal><span class="num">04</span><p><strong>Análise honesta</strong>Inclusive dos resultados que contradizem a hipótese inicial.</p></li>
+        <li data-reveal><span class="num">05</span><p><strong>Verificabilidade</strong>Outro investigador precisa poder repetir o processo e chegar a resultados parecidos.</p></li>
+        <li data-reveal><span class="num">06</span><p><strong>Ética</strong>Respeito às pessoas, fontes e informações envolvidas na investigação.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- KIT DE INVESTIGAÇÃO -->
+  <section id="s-kit">
+    <div class="section-inner">
+      <div class="kicker">Parte 05</div>
+      <h2 class="section-title">Kit de investigação — métodos de coleta de dados</h2>
+
+      <div class="kit-grid">
+        <div class="kit-item" data-reveal>
+          <span class="tag">Evidência 01</span>
+          <h4>Entrevista</h4>
+          <p>Conversa direta com quem vive o problema, ótima para captar motivações e detalhes que um formulário não pega.</p>
+        </div>
+        <div class="kit-item" data-reveal>
+          <span class="tag">Evidência 02</span>
+          <h4>Questionário / survey</h4>
+          <p>Perguntas padronizadas aplicadas a muitas pessoas, ideais para medir e comparar em escala.</p>
+        </div>
+        <div class="kit-item" data-reveal>
+          <span class="tag">Evidência 03</span>
+          <h4>Observação de campo</h4>
+          <p>Registrar o fenômeno no próprio ambiente onde ele acontece, sem interferir nele.</p>
+        </div>
+        <div class="kit-item" data-reveal>
+          <span class="tag">Evidência 04</span>
+          <h4>Experimento</h4>
+          <p>Testar uma variável em condições controladas para observar o efeito que ela produz.</p>
+        </div>
+        <div class="kit-item" data-reveal>
+          <span class="tag">Evidência 05</span>
+          <h4>Grupo focal</h4>
+          <p>Discussão guiada com um pequeno grupo, útil para explorar percepções coletivas sobre um tema.</p>
+        </div>
+        <div class="kit-item" data-reveal>
+          <span class="tag">Evidência 06</span>
+          <h4>Pesquisa documental</h4>
+          <p>Análise de livros, artigos e registros já publicados para embasar teoricamente o caso.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINHA DO TEMPO -->
+  <section id="s-linha">
+    <div class="section-inner">
+      <div class="kicker">Parte 06</div>
+      <h2 class="section-title">Linha do tempo do caso — as etapas da pesquisa</h2>
+
+      <div class="tline">
+        <div class="tstep" data-n="1" data-reveal><h4>Definir o problema</h4><p>Entender exatamente qual pergunta a investigação precisa responder.</p></div>
+        <div class="tstep" data-n="2" data-reveal><h4>Revisar o que já existe</h4><p>Buscar o que outros investigadores já descobriram sobre o tema.</p></div>
+        <div class="tstep" data-n="3" data-reveal><h4>Escolher a metodologia</h4><p>Decidir qual tipo de pesquisa e quais instrumentos de coleta fazem sentido.</p></div>
+        <div class="tstep" data-n="4" data-reveal><h4>Coletar os dados</h4><p>Aplicar os instrumentos escolhidos e reunir as evidências do caso.</p></div>
+        <div class="tstep" data-n="5" data-reveal><h4>Analisar as evidências</h4><p>Organizar e interpretar o que foi coletado, com honestidade.</p></div>
+        <div class="tstep" data-n="6" data-reveal><h4>Concluir e reportar</h4><p>Comunicar a resposta encontrada, mesmo quando ela for "ainda não sabemos".</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPACTO NO MUNDO REAL -->
+  <section id="s-impacto">
+    <div class="section-inner">
+      <div class="kicker">Parte 07</div>
+      <h2 class="section-title">A pesquisa muda o comportamento do mundo real</h2>
+
+      <p class="impact-note" style="margin-bottom:26px;">O resultado de uma pesquisa não fica preso ao papel: ele molda a forma como a sociedade se comporta. Três marcas registradas nesta caderneta mostram esse efeito em escalas diferentes.</p>
+
+      <div class="impact-grid">
+        <div class="impact-card" style="--rot:-0.8deg" data-reveal>
+          <span class="file-no">Registro 01</span>
+          <h4>Louis Pasteur</h4>
+          <p>Sua pesquisa básica em microbiologia, sem alvo comercial definido, revelou as causas de doenças infecciosas e originou a pasteurização, hoje pilar da segurança alimentar mundial.</p>
+        </div>
+        <div class="impact-card" style="--rot:0.6deg" data-reveal>
+          <span class="file-no">Registro 02</span>
+          <h4>Pandemia e universidade</h4>
+          <p>Mesmo com aulas presenciais suspensas, a pesquisa universitária seguiu ativa, gerando dados essenciais para o desenvolvimento de vacinas e para reduzir o contágio.</p>
+        </div>
+        <div class="impact-card" style="--rot:-0.5deg" data-reveal>
+          <span class="file-no">Registro 03</span>
+          <h4>O cigarro e a saúde pública</h4>
+          <p>Pesquisas epidemiológicas das décadas de 1950 e 1960 comprovaram a relação entre tabagismo e câncer de pulmão. O resultado mudou leis, embalagens e campanhas, reduzindo de forma drástica o consumo de cigarros nas décadas seguintes.</p>
+        </div>
+      </div>
+
+      <p class="impact-note">No Brasil, é dentro das universidades que a maior parte dessa produção acontece, via bolsas de iniciação científica, grupos de pesquisa e dissertações de pós-graduação, formando estudantes com pensamento crítico e aptos a resolver problemas reais da própria área.</p>
+    </div>
+  </section>
+
+  <!-- REFERÊNCIAS -->
+  <section id="s-referencias">
+    <div class="section-inner">
+      <div class="kicker">Parte 08</div>
+      <h2 class="section-title">Fontes da investigação — referências</h2>
+
+      <ul class="refs">
+        <li data-reveal>SANDER, Carlos. Metodologias de pesquisa: como escolher a abordagem certa para seu projeto? <em>Frons</em>, 24 jun. 2026. Disponível em: <a href="https://frons.com.br/blog/processos/metodologias-de-pesquisa-tipos-exemplos-quando-usar-cada-uma/" target="_blank" rel="noopener">https://frons.com.br/blog/processos/metodologias-de-pesquisa-tipos-exemplos-quando-usar-cada-uma/</a>. Acesso em: 28 ago. 2026.</li>
+        <li data-reveal>MUGUIRA, Andres. Tipos de pesquisa e suas principais características. <em>QuestionPro</em>, [s. d.]. Disponível em: <a href="https://www.questionpro.com/blog/pt-br/tipos-de-pesquisa/" target="_blank" rel="noopener">https://www.questionpro.com/blog/pt-br/tipos-de-pesquisa/</a>. Acesso em: 28 ago. 2026.</li>
+        <li data-reveal>ESPM. Entenda qual a importância da pesquisa científica. <em>ESPM</em>, [s. d.]. Disponível em: <a href="https://www.espm.br/blog/entenda-qual-a-importancia-da-pesquisa-cientifica/" target="_blank" rel="noopener">https://www.espm.br/blog/entenda-qual-a-importancia-da-pesquisa-cientifica/</a>. Acesso em: 28 ago. 2026.</li>
+        <li data-reveal>ROSA, Nalbert. Refinando o conhecimento: saiba o que é e como fazer uma pesquisa pura! <em>Mettzer</em>, 14 set. 2023. Atualizado em: 13 abr. 2026. Disponível em: <a href="https://blog.mettzer.com/pesquisa-pura/" target="_blank" rel="noopener">https://blog.mettzer.com/pesquisa-pura/</a>. Acesso em: 28 ago. 2026.</li>
+        <li data-reveal>MAGNABOSCO, Maria. A importância da pesquisa na Universidade – Propesq Explica 06. <em>UFSC – Pró-Reitoria de Pesquisa e Inovação</em>, 18 out. 2022. Disponível em: <a href="https://propesq.ufsc.br/a-importancia-da-pesquisa-na-universidade-propesq-explica-06/" target="_blank" rel="noopener">https://propesq.ufsc.br/a-importancia-da-pesquisa-na-universidade-propesq-explica-06/</a>. Acesso em: 28 ago. 2026.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ENCERRAMENTO -->
+  <section id="s-fim" class="closing">
+    <div class="section-inner">
+      <div class="stamp" data-reveal>CASO ENCERRADO — POR ENQUANTO</div>
+      <p class="closing-highlight" id="closing-typed" data-reveal></p>
+      <p class="closing-note">O conhecimento avança porque aceita ser revisado. Divulgar o que se descobre, mesmo quando a resposta ainda é parcial, é o que permite que a sociedade reconheça o trabalho de quem pesquisa e continue apoiando essa investigação.</p>
+      <p class="closing-mark">▲ investigação continua — próxima descoberta em aberto</p>
+      <div class="signature" style="opacity:1; transform:none; translate:0 0;">Investigadora responsável: Verediane Mazutti Filomeno ✍️</div>
+    </div>
+  </section>
+
+  <div class="footer-small">ARQUIVO ENCERRADO · TRABALHO DE PESQUISA</div>
+
+</div>
+
+<script>
+  // Typewriter effect for hero subtitle
+  const typedEl = document.getElementById('typed');
+  const phrase = "Toda descoberta começa com uma pergunta incômoda.";
+  let i = 0;
+  function typeChar(){
+    if(i <= phrase.length){
+      typedEl.textContent = phrase.slice(0, i);
+      i++;
+      setTimeout(typeChar, 38);
+    } else {
+      typedEl.style.borderRight = "2px solid transparent";
+    }
+  }
+  setTimeout(typeChar, 500);
+
+  // Scroll button
+  document.getElementById('scroll-btn').addEventListener('click', ()=>{
+    document.getElementById('s-identificacao').scrollIntoView({behavior:'smooth'});
+  });
+
+  // Typewriter effect for the closing highlight sentence
+  const closingEl = document.getElementById('closing-typed');
+  const closingPhrase = "Toda verdade científica é provisória, e é isso que a mantém viva.";
+  let closingTyped = false;
+  function typeClosing(){
+    let j = 0;
+    function step(){
+      if(j <= closingPhrase.length){
+        closingEl.textContent = closingPhrase.slice(0, j);
+        j++;
+        setTimeout(step, 34);
+      } else {
+        closingEl.classList.add('done');
+      }
+    }
+    step();
+  }
+  const closingIo = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting && !closingTyped){
+        closingTyped = true;
+        typeClosing();
+      }
+    });
+  }, {threshold:0.5});
+  closingIo.observe(closingEl);
+
+  // Reveal on scroll
+  const revealEls = document.querySelectorAll('[data-reveal], .card, .type-card, .rules li, .kit-item, .tstep, .stamp, .impact-card, .id-card, .refs li');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+      }
+    });
+  }, {threshold:0.18, rootMargin:"0px 0px -60px 0px"});
+  revealEls.forEach(el=>io.observe(el));
+
+  // Nav dots active state + click to scroll
+  const sections = ["s-identificacao","s-abertura","s-importancia","s-tipos","s-regras","s-kit","s-linha","s-impacto","s-referencias","s-fim"].map(id=>document.getElementById(id));
+  const dots = document.querySelectorAll('.case-nav button');
+  dots.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.getElementById(btn.dataset.target).scrollIntoView({behavior:'smooth'});
+    });
+  });
+  const navIo = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const idx = sections.indexOf(entry.target);
+      if(entry.isIntersecting && idx !== -1){
+        dots.forEach(d=>d.classList.remove('active'));
+        dots[idx].classList.add('active');
+      }
+    });
+  }, {threshold:0.5});
+  sections.forEach(s=> s && navIo.observe(s));
+</script>
+
+</body>
+</html>
